@@ -1,0 +1,42 @@
+signoz: 
+  cert-manager:
+    enabled: true
+    installCRDs: true
+  ingress-nginx:
+    enabled: true
+  
+  frontend:
+    ingress:
+      enabled: true
+      className: nginx
+      hosts:
+        - host: signoz.upwork-32321074.proj.chrisvfab.io
+          paths:
+            - path: /
+              pathType: ImplementationSpecific
+              port: 3301
+      tls:
+        - secretName: signoz.upwork-32321074.proj.chrisvfab.io
+          hosts:
+            - signoz.upwork-32321074.proj.chrisvfab.io
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-prod
+
+  otelCollector:
+    ingress:
+      enabled: true
+      className: nginx
+      hosts:
+        - host: signoz-otel.upwork-32321074.proj.chrisvfab.io
+          paths:
+            - path: /
+              pathType: ImplementationSpecific
+              port: 4317
+      tls:
+        - secretName: signoz-otel.upwork-32321074.proj.chrisvfab.io
+          hosts:
+            - signoz-otel.upwork-32321074.proj.chrisvfab.io
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-prod
+        nginx.ingress.kubernetes.io/ssl-redirect: "true"
+        nginx.ingress.kubernetes.io/backend-protocol: "GRPC"

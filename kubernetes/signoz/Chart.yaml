@@ -1,0 +1,7 @@
+apiVersion: v2
+name: signoz
+version: 1.0.0
+dependencies:
+  - name: signoz
+    version: 0.7.1
+    repository: https://charts.signoz.io

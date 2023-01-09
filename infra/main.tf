@@ -7,22 +7,32 @@ terraform {
   }
 }
 
-# Configure the DigitalOcean Provider
-provider "digitalocean" {
-  #   token = var.do_token - DIGITALOCEAN_TOKEN env
+provider "digitalocean" {}
+
+resource "digitalocean_project" "project" {
+  name = "upwork-32321074"
+  resources = [
+    digitalocean_app.dotnet-sample.urn,
+    digitalocean_kubernetes_cluster.sample-cluster.urn,
+  ]
 }
 
 resource "digitalocean_app" "dotnet-sample" {
   spec {
     name   = "dotnet-sample"
-    region = "sgp1"
+    region = "sgp"
 
     service {
       name               = "dotnet-service"
+      http_port          = 80
       instance_count     = 1
       instance_size_slug = "basic-xxs"
       source_dir         = "apps/sample-api"
       dockerfile_path    = "apps/sample-api/Dockerfile"
+
+      health_check {
+        http_path = "/healthz"
+      }
 
       github {
         repo           = "chrisvfabio/digitalocean-dotnet-signoz"
@@ -33,22 +43,14 @@ resource "digitalocean_app" "dotnet-sample" {
   }
 }
 
+resource "digitalocean_kubernetes_cluster" "sample-cluster" {
+  name   = "k8s-sample-cluster"
+  region = "sgp1"
+  version = "1.25.4-do.0"
 
-# resource "digitalocean_kubernetes_cluster" "foo" {
-#   name   = "foo"
-#   region = "nyc1"
-#   # Grab the latest version slug from `doctl kubernetes options versions`
-#   version = "1.22.8-do.1"
-
-#   node_pool {
-#     name       = "worker-pool"
-#     size       = "s-2vcpu-2gb"
-#     node_count = 3
-
-#     taint {
-#       key    = "workloadKind"
-#       value  = "database"
-#       effect = "NoSchedule"
-#     }
-#   }
-# }
+  node_pool {
+    name       = "pool-1"
+    size       = "s-4vcpu-8gb"
+    node_count = 1
+  }
+}
