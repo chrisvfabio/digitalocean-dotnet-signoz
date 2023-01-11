@@ -47,9 +47,6 @@ kubectl apply -f ./kubernetes/cert-manager-issuers
 helm upgrade signoz ./kubernetes/signoz --install --namespace signoz --values ./kubernetes/signoz/values.yaml --wait
 ```
 
-> Ignore this error
->  `Error: Get "https://38988dd2-98c6-4147-8eca-9308218b1ee9.k8s.ondigitalocean.com/apis/apps/v1/namespaces/signoz/deployments/signoz-frontend": context deadline exceeded`
-
 ## Step 3: Setting up DNS
 
 ```bash
